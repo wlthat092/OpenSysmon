@@ -1,0 +1,10 @@
+<Sysmon schemaversion="4.90">
+  <HashAlgorithms>sha1</HashAlgorithms>
+  <CheckRevocation>False</CheckRevocation>
+  <DnsLookup>False</DnsLookup>
+  <EventFiltering>
+    <RuleGroup groupRelation="or">
+      <ImageLoad onmatch="include" />
+    </RuleGroup>
+  </EventFiltering>
+</Sysmon>

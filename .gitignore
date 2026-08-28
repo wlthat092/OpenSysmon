@@ -1,0 +1,91 @@
+# Visual Studio local state
+/.vs/
+.claude/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.VC.db
+*.VC.opendb
+*.sdf
+*.opensdf
+*.opendb
+.idea/
+/.worktrees/
+
+# Build artifacts
+/SysmonDrv/x64/
+/SysmonUser/x64/
+/ida_code/
+/configs/
+*.code-workspace
+**/bin/
+**/obj/
+**/out/
+**/dist/
+**/[Dd]ebug/
+**/[Rr]elease/
+**/TestResults/
+**/coverage/
+*.obj
+*.pdb
+*.ilk
+*.tlog
+*.lastbuildstate
+*.recipe
+*.iobj
+*.ipdb
+*.log
+*.ncb
+*.aps
+*.cache
+*.trx
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+
+# Reverse-engineering temp artifacts
+/.codex-tmp-ordinal-helper.c
+
+# External event-test binaries
+/tests/sysmon-events/tools/*.exe
+
+# Signing and packaging artifacts
+*.cer
+*.pfx
+*.pvk
+*.cat
+*.p12
+*.p7b
+*.p7s
+*.key
+*.pem
+*.nupkg
+
+# Test/runtime traces and crash dumps
+*.etl
+*.dmp
+*.tmp
+*.temp
+*.bak
+*.orig
+*.rej
+*~
+*.swp
+*.swo
+
+# Python and local environment files
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+
+# Operating-system metadata
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Internal design and execution notes
+/docs/superpowers/

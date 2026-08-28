@@ -1,0 +1,30 @@
+<Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+	<System>
+	  <Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+	  <EventID>15</EventID>
+	  <Version>2</Version>
+	  <Level>4</Level>
+	  <Task>15</Task>
+	  <Opcode>0</Opcode>
+	  <Keywords>0x8000000000000000</Keywords>
+	  <TimeCreated SystemTime="2022-09-22T23:48:39.094213400Z" />
+	  <EventRecordID>2418704</EventRecordID>
+	  <Correlation />
+	  <Execution ProcessID="2948" ThreadID="3724" />
+	  <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+	  <Computer>TEST-HOST</Computer>
+	  <Security UserID="S-1-5-18" />
+	</System>
+	<EventData>
+	  <Data Name="RuleName">-</Data>
+	  <Data Name="UtcTime">2022-09-22 23:48:39.087</Data>
+	  <Data Name="ProcessGuid">{564ff025-e161-62f6-ad03-000000000500}</Data>
+	  <Data Name="ProcessId">2604</Data>
+	  <Data Name="Image">C:\Windows\Explorer.EXE</Data>
+	  <Data Name="TargetFilename">C:\Users\test-user\Desktop\Sysmon\Sysmon64.exe:Zone.Identifier</Data>
+	  <Data Name="CreationUtcTime">2022-09-22 23:48:39.087</Data>
+	  <Data Name="Hash">SHA1=000F277774DD28D7F4D00E174B4741F71D8828E4,MD5=2004CA2A9BFEBFB45B145B5D80B3FD76,SHA256=2AD30B0FA4239B95D7059A1E5D7BC16328F98B23C89D3A437A3F1661F05F82F0,IMPHASH=00000000000000000000000000000000</Data>
+	  <Data Name="Contents">[ZoneTransfer]  ZoneId=3  ReferrerUrl=C:\\TestData\\Sysmon.zip  </Data>
+	  <Data Name="User">TEST-HOST\test-user</Data>
+	</EventData>
+</Event>

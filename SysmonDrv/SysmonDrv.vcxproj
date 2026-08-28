@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{B12702AD-ABFB-343A-A199-E54F08F16625}</ProjectGuid>
+    <RootNamespace>SysmonDrv</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>SysmonDrv</ProjectName>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <TargetVersion>Windows10</TargetVersion>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings" />
+  <PropertyGroup>
+    <OutDir>$(ProjectDir)x64\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)x64\$(Configuration)\obj\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <NMakeBuildCommandLine>powershell -ExecutionPolicy Bypass -File "$(ProjectDir)build.ps1"</NMakeBuildCommandLine>
+    <NMakeRebuildCommandLine>powershell -ExecutionPolicy Bypass -File "$(ProjectDir)build.ps1" -Rebuild</NMakeRebuildCommandLine>
+    <NMakeCleanCommandLine>powershell -ExecutionPolicy Bypass -File "$(ProjectDir)build.ps1" -Clean</NMakeCleanCommandLine>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <NMakeBuildCommandLine>powershell -ExecutionPolicy Bypass -File "$(ProjectDir)build.ps1" -Release</NMakeBuildCommandLine>
+    <NMakeRebuildCommandLine>powershell -ExecutionPolicy Bypass -File "$(ProjectDir)build.ps1" -Release -Rebuild</NMakeRebuildCommandLine>
+    <NMakeCleanCommandLine>powershell -ExecutionPolicy Bypass -File "$(ProjectDir)build.ps1" -Clean</NMakeCleanCommandLine>
+  </PropertyGroup>
+  <ItemGroup>
+    <ClInclude Include="include\common.h" />
+    <ClInclude Include="include\clipboard.h" />
+    <ClInclude Include="include\dns.h" />
+    <ClInclude Include="include\driver.h" />
+    <ClInclude Include="include\event.h" />
+    <ClInclude Include="include\communication.h" />
+    <ClInclude Include="include\fileinfo.h" />
+    <ClInclude Include="include\hash.h" />
+    <ClInclude Include="include\minifilter.h" />
+    <ClInclude Include="include\network.h" />
+    <ClInclude Include="include\process.h" />
+    <ClInclude Include="include\registry.h" />
+    <ClInclude Include="include\queue.h" />
+    <ClInclude Include="include\pipe.h" />
+    <ClInclude Include="include\processinfo.h" />
+    <ClInclude Include="include\rules.h" />
+    <ClInclude Include="include\obcallback.h" />
+    <ClInclude Include="include\tampering.h" />
+    <ClInclude Include="include\utils.h" />
+    <ClInclude Include="include\wmi.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\clipboard.c" />
+    <ClCompile Include="src\dns.c" />
+    <ClCompile Include="src\driver.c" />
+    <ClCompile Include="src\minifilter.c" />
+    <ClCompile Include="src\process.c" />
+    <ClCompile Include="src\thread.c" />
+    <ClCompile Include="src\image.c" />
+    <ClCompile Include="src\registry.c" />
+    <ClCompile Include="src\communication.c" />
+    <ClCompile Include="src\event.c" />
+    <ClCompile Include="src\queue.c" />
+    <ClCompile Include="src\hash.c" />
+    <ClCompile Include="src\fileinfo.c" />
+    <ClCompile Include="src\processinfo.c" />
+    <ClCompile Include="src\network.c" />
+    <ClCompile Include="src\pipe.c" />
+    <ClCompile Include="src\utils.c" />
+    <ClCompile Include="src\registry_data.c" />
+    <ClCompile Include="src\rules.c" />
+    <ClCompile Include="src\obcallback.c" />
+    <ClCompile Include="src\tampering.c" />
+    <ClCompile Include="src\wmi.c" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets" />
+</Project>

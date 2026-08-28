@@ -1,0 +1,29 @@
+<Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+  <System>
+	<Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+	<EventID>2</EventID>
+	<Version>5</Version>
+	<Level>4</Level>
+	<Task>2</Task>
+	<Opcode>0</Opcode>
+	<Keywords>0x8000000000000000</Keywords>
+	<TimeCreated SystemTime="2022-09-22T23:53:56.145508400Z" />
+	<EventRecordID>2442442</EventRecordID>
+	<Correlation />
+	<Execution ProcessID="6152" ThreadID="7900" />
+	<Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+	<Computer>TEST-HOST</Computer>
+	<Security UserID="S-1-5-18" />
+  </System>
+  <EventData>
+	<Data Name="RuleName">-</Data>
+	<Data Name="UtcTime">2022-09-22 23:53:56.138</Data>
+	<Data Name="ProcessGuid">{564ff025-9ddc-6318-4605-000000000500}</Data>
+	<Data Name="ProcessId">6112</Data>
+	<Data Name="Image">C:\Windows\system32\WindowsPowerShell\v1.0\PowerShell_ISE.exe</Data>
+	<Data Name="TargetFilename">C:\Users\test-user\AppData\Local\Microsoft_Corporation\PowerShell_ISE.exe_StrongName_test-cache\3.0.0.0\AutoSaveInformation\w1hsxydx.tmp</Data>
+	<Data Name="CreationUtcTime">2022-09-07 13:36:32.306</Data>
+	<Data Name="PreviousCreationUtcTime">2022-09-22 23:53:53.981</Data>
+	<Data Name="User">TEST-HOST\test-user</Data>
+  </EventData>
+</Event>

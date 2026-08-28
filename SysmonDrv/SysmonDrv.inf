@@ -1,0 +1,51 @@
+;; SysmonDrv.inf
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = "ActivityMonitor"
+ClassGuid   = {b86dff51-a31e-4bac-b3cf-e8cfe75c9fc2}
+Provider    = %ManufacturerName%
+DriverVer   = 05/27/2026,100.18.0.0
+PnpLockdown = 1
+
+[DestinationDirs]
+DefaultDestDir          = 12
+SysmonDrv.Driver.Files  = 12
+
+[DefaultInstall.NTamd64]
+CopyFiles = SysmonDrv.Driver.Files
+
+[DefaultInstall.NTamd64.Services]
+AddService = %ServiceName%,,SysmonDrv.Service
+
+[DefaultRemove.NTamd64]
+DelFiles = SysmonDrv.Driver.Files
+
+[DefaultRemove.NTamd64.Services]
+DelService = %ServiceName%,0x200
+
+[SysmonDrv.Driver.Files]
+%DriverName%.sys
+
+[SysmonDrv.Service]
+DisplayName    = %ServiceName%
+Description    = %ServiceDescription%
+ServiceType    = 2
+StartType      = 1
+ErrorControl   = 1
+LoadOrderGroup = "FSFilter Activity Monitor"
+ServiceBinary  = %12%\%DriverName%.sys
+Security = "D:P(A;;GA;;;SY)(A;;GA;;;BA)"
+AddReg = SysmonDrv.Instances.AddReg
+
+[SysmonDrv.Instances.AddReg]
+HKLM,"SYSTEM\CurrentControlSet\Services\%ServiceName%\Instances","DefaultInstance",0x00000000,%InstanceName%
+HKLM,"SYSTEM\CurrentControlSet\Services\%ServiceName%\Instances\%InstanceName%","Altitude",0x00000000,%Altitude%
+HKLM,"SYSTEM\CurrentControlSet\Services\%ServiceName%\Instances\%InstanceName%","Flags",0x00000000,0x00000000
+
+[Strings]
+ManufacturerName   = "SysmonDrv"
+DriverName         = "SysmonDrv"
+ServiceName        = "SysmonDrv"
+ServiceDescription = "SysmonDrv File System Minifilter Driver"
+InstanceName      = "Sysmon Instance"
+Altitude          = "385201"

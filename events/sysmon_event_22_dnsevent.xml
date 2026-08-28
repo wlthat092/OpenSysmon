@@ -1,0 +1,29 @@
+<Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+  <System>
+	<Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+	<EventID>22</EventID>
+	<Version>5</Version>
+	<Level>4</Level>
+	<Task>22</Task>
+	<Opcode>0</Opcode>
+	<Keywords>0x8000000000000000</Keywords>
+	<TimeCreated SystemTime="2022-09-23T00:42:33.463092000Z" />
+	<EventRecordID>2451179</EventRecordID>
+	<Correlation />
+	<Execution ProcessID="6152" ThreadID="6468" />
+	<Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+	<Computer>TEST-HOST</Computer>
+	<Security UserID="S-1-5-18" />
+  </System>
+  <EventData>
+	<Data Name="RuleName">-</Data>
+	<Data Name="UtcTime">2022-09-22 23:54:47.958</Data>
+	<Data Name="ProcessGuid">{564ff025-f55b-632c-ab07-000000000500}</Data>
+	<Data Name="ProcessId">1956</Data>
+	<Data Name="QueryName">checkappexec.microsoft.com</Data>
+	<Data Name="QueryStatus">1460</Data>
+	<Data Name="QueryResults">type:  5 wd-prod-ss.trafficmanager.net;type:  5 wd-prod-ss-us-west-1-fe.westus.cloudapp.azure.com;::ffff:40.78.63.86;</Data>
+	<Data Name="Image">C:\Windows\System32\smartscreen.exe</Data>
+	<Data Name="User">TEST-HOST\test-user</Data>
+  </EventData>
+</Event>

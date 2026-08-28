@@ -1,0 +1,28 @@
+<Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+        <Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385F-C22A-43E0-BF4C-06F5698FFBD9}" />
+        <EventID>27</EventID>
+        <Version>5</Version>
+        <Level>4</Level>
+        <Task>27</Task>
+        <Opcode>0</Opcode>
+        <Keywords>0x8000000000000000</Keywords>
+        <TimeCreated SystemTime="2024-02-27T17:48:55.9824794Z" />
+        <EventRecordID>1051</EventRecordID>
+        <Correlation />
+        <Execution ProcessID="9596" ThreadID="11128" />
+        <Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+        <Computer>TEST-HOST</Computer>
+        <Security UserID="S-1-5-18" />
+    </System>
+    <EventData>
+        <Data Name="RuleName">-</Data>
+        <Data Name="UtcTime">2024-02-27 17:48:55.967</Data>
+        <Data Name="ProcessGuid">{8a1a452d-2087-65de-9204-000000000500}</Data>
+        <Data Name="ProcessId">516</Data>
+        <Data Name="User">TEST-HOST\test-user</Data>
+        <Data Name="Image">C:\Windows\Explorer.EXE</Data>
+        <Data Name="TargetFilename">C:\junk\SysmonSimulator.exe</Data>
+        <Data Name="Hashes">SHA1=EF74041A282B70791E828D163ECB8E8A40EEF57D,MD5=7D9F7D00B860D60518B5A30341D1FA50,SHA256=CB3CB255C47086D2737267F64E7C16871CDA2FCFA47B6693FA07328F8AC8C2EE,IMPHASH=0926EA6C31491D5DC172FBA45DA92A3A</Data>
+    </EventData>
+</Event>

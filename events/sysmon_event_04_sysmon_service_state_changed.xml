@@ -1,0 +1,24 @@
+<Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+  <System>
+	<Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+	<EventID>4</EventID>
+	<Version>3</Version>
+	<Level>4</Level>
+	<Task>4</Task>
+	<Opcode>0</Opcode>
+	<Keywords>0x8000000000000000</Keywords>
+	<TimeCreated SystemTime="2022-09-22T23:49:22.499007500Z" />
+	<EventRecordID>2422174</EventRecordID>
+	<Correlation />
+	<Execution ProcessID="2948" ThreadID="2952" />
+	<Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+	<Computer>TEST-HOST</Computer>
+	<Security UserID="S-1-5-18" />
+  </System>
+  <EventData>
+	<Data Name="UtcTime">2022-09-22 23:49:22.493</Data>
+	<Data Name="State">Stopped</Data>
+	<Data Name="Version">13.24</Data>
+	<Data Name="SchemaVersion">4.70</Data>
+  </EventData>
+</Event>

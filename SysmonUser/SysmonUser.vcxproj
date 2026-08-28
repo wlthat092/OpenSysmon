@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <ProjectGuid>{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}</ProjectGuid>
+    <RootNamespace>SysmonUser</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <ProjectName>SysmonUser</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <LinkIncremental>false</LinkIncremental>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetName>Sysmon</TargetName>
+    <TargetExt>.exe</TargetExt>
+    <OutDir>$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetName>Sysmon</TargetName>
+    <TargetExt>.exe</TargetExt>
+    <OutDir>$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;UNICODE;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\third_party\SymCrypt\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <!-- Match SymCrypt undocked user-mode static library CRT (UndockedOfficial=false => /MDd). -->
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <LinkIncremental>false</LinkIncremental>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>advapi32.lib;kernel32.lib;user32.lib;tdh.lib;wevtapi.lib;psapi.lib;ole32.lib;oleaut32.lib;wbemuuid.lib;wtsapi32.lib;xmllite.lib;version.lib;ws2_32.lib;bcrypt.lib;rpcrt4.lib;symcrypt_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\third_party\SymCrypt\build\bin\amd64chk\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;UNICODE;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\third_party\SymCrypt\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <!-- Match SymCrypt undocked user-mode static library CRT (UndockedOfficial=false => /MD). -->
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>advapi32.lib;kernel32.lib;user32.lib;tdh.lib;wevtapi.lib;psapi.lib;ole32.lib;oleaut32.lib;wbemuuid.lib;wtsapi32.lib;xmllite.lib;version.lib;ws2_32.lib;bcrypt.lib;rpcrt4.lib;symcrypt_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\third_party\SymCrypt\build\bin\amd64fre\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="include\common.h" />
+    <ClInclude Include="include\clipboard_monitor.h" />
+    <ClInclude Include="include\protocol.h" />
+    <ClInclude Include="include\process_store.h" />
+    <ClInclude Include="include\config.h" />
+    <ClInclude Include="include\event_schema.h" />
+    <ClInclude Include="include\event_field_tables.inc" />
+    <ClInclude Include="include\hash_compat.h" />
+    <ClInclude Include="include\runtime.hpp" />
+    <ClInclude Include="include\service.h" />
+    <ClInclude Include="include\source_common.h" />
+    <ClInclude Include="include\event.h" />
+    <ClInclude Include="include\cli.h" />
+    <ClInclude Include="include\installer.h" />
+    <ClInclude Include="include\path_cache.h" />
+    <ClInclude Include="include\pipeline.h" />
+    <ClInclude Include="include\output.h" />
+    <ClInclude Include="include\output_enrichment.h" />
+    <ClInclude Include="include\dns_trace.h" />
+    <ClInclude Include="include\network_trace.h" />
+    <ClInclude Include="include\rules.h" />
+    <ClInclude Include="include\wmi_trace.h" />
+    <ClInclude Include="build\SysmonClipboard_h.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\clipboard_monitor.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\common.cpp" />
+    <ClCompile Include="src\protocol.cpp" />
+    <ClCompile Include="src\process_store.cpp" />
+    <ClCompile Include="src\config.cpp" />
+    <ClCompile Include="src\hash_compat.cpp" />
+    <ClCompile Include="src\service.cpp" />
+    <ClCompile Include="src\source_common.cpp" />
+    <ClCompile Include="src\cli.cpp" />
+    <ClCompile Include="src\installer.cpp" />
+    <ClCompile Include="src\path_cache.cpp" />
+    <ClCompile Include="src\pipeline.cpp" />
+    <ClCompile Include="src\event_schema.cpp" />
+    <ClCompile Include="src\output.cpp" />
+    <ClCompile Include="src\output_enrichment.cpp" />
+    <ClCompile Include="src\dns_trace.cpp" />
+    <ClCompile Include="src\network_trace.cpp" />
+    <ClCompile Include="src\event.cpp" />
+    <ClCompile Include="src\rules.cpp" />
+    <ClCompile Include="src\wmi_trace.cpp" />
+    <ClCompile Include="src\xml_config.cpp" />
+    <ClCompile Include="build\SysmonClipboard_s.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resources\sysmon_provider.rc" />
+    <ResourceCompile Include="resources\sysmon_manifest.rc" />
+    <ResourceCompile Include="resources\sysmon_schema.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
+
+

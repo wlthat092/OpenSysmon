@@ -1,0 +1,36 @@
+<Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+  <System>
+	<Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+	<EventID>7</EventID>
+	<Version>3</Version>
+	<Level>4</Level>
+	<Task>7</Task>
+	<Opcode>0</Opcode>
+	<Keywords>0x8000000000000000</Keywords>
+	<TimeCreated SystemTime="2022-09-23T00:21:03.653150900Z" />
+	<EventRecordID>2480492</EventRecordID>
+	<Correlation />
+	<Execution ProcessID="6152" ThreadID="7900" />
+	<Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+	<Computer>TEST-HOST</Computer>
+	<Security UserID="S-1-5-18" />
+  </System>
+  <EventData>
+    <Data Name="RuleName">-</Data>
+	<Data Name="UtcTime">2022-09-23 00:21:03.645</Data>
+	<Data Name="ProcessGuid">{564ff025-fbd0-632c-df07-000000000500}</Data>
+	<Data Name="ProcessId">3988</Data>
+	<Data Name="Image">C:\Windows\System32\sppsvc.exe</Data>
+	<Data Name="ImageLoaded">C:\Windows\System32\sspicli.dll</Data>
+	<Data Name="FileVersion">10.0.18362.1 (WinBuild.160101.0800)</Data>
+	<Data Name="Description">Security Support Provider Interface</Data>
+	<Data Name="Product">Microsoft® Windows® Operating System</Data>
+	<Data Name="Company">Microsoft Corporation</Data>
+	<Data Name="OriginalFileName">sspicli.dll</Data>
+	<Data Name="Hashes">SHA1=7965D4A2E57A263621662A921B7270B7B773FFEF,MD5=3E966F088D46A0EB482E3DC4AF266C0F,SHA256=106C7873DB17E4542022245EEA148F815CE547C36523861DDDB50103C65D8B07,IMPHASH=1A813D04520E602A9E31CB5E06F81D1D</Data>
+	<Data Name="Signed">true</Data>
+	<Data Name="Signature">Microsoft Windows</Data>
+	<Data Name="SignatureStatus">Valid</Data>
+	<Data Name="User">NT AUTHORITY\NETWORK SERVICE</Data>
+  </EventData>
+</Event>

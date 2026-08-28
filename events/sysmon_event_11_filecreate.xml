@@ -1,0 +1,28 @@
+<Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+  <System>
+	<Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+	<EventID>11</EventID>
+	<Version>2</Version>
+	<Level>4</Level>
+	<Task>11</Task>
+	<Opcode>0</Opcode>
+	<Keywords>0x8000000000000000</Keywords>
+	<TimeCreated SystemTime="2022-09-22T23:50:47.184554800Z" />
+	<EventRecordID>2424474</EventRecordID>
+	<Correlation />
+	<Execution ProcessID="6152" ThreadID="7900" />
+	<Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+	<Computer>TEST-HOST</Computer>
+	<Security UserID="S-1-5-18" />
+  </System>
+  <EventData>
+	<Data Name="RuleName">-</Data>
+	<Data Name="UtcTime">2022-09-22 23:50:47.181</Data>
+	<Data Name="ProcessGuid">{564ff025-ee7b-632c-4507-000000000500}</Data>
+	<Data Name="ProcessId">3976</Data>
+	<Data Name="Image">C:\Windows\system32\mmc.exe</Data>
+	<Data Name="TargetFilename">C:\Users\test-user\AppData\Local\Temp\tmpE7EC.xml</Data>
+	<Data Name="CreationUtcTime">2022-09-22 23:50:47.181</Data>
+	<Data Name="User">TEST-HOST\test-user</Data>
+  </EventData>
+</Event>

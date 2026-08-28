@@ -1,0 +1,36 @@
+TARGETNAME=SysmonDrv
+TARGETTYPE=DRIVER
+KMDF_VERSION_MAJOR=1
+TARGETPATH=obj
+INCLUDES=$(DDK_INC_PATH);$(KMDF_INC_PATH);..\include;..\..\third_party\SymCrypt\inc
+SOURCES= \
+    ..\src\driver.c \
+    ..\src\minifilter.c \
+    ..\src\process.c \
+    ..\src\thread.c \
+    ..\src\image.c \
+    ..\src\registry.c \
+    ..\src\communication.c \
+    ..\src\event.c \
+    ..\src\queue.c \
+    ..\src\hash.c \
+    ..\src\fileinfo.c \
+    ..\src\processinfo.c \
+    ..\src\utils.c \
+    ..\src\registry_data.c \
+    ..\src\rules.c \
+    ..\src\obcallback.c \
+    ..\src\tampering.c \
+    ..\src\network.c \
+    ..\src\pipe.c \
+    ..\src\wmi.c \
+    ..\src\dns.c \
+    ..\src\clipboard.c
+
+TARGETLIBS= \
+    $(TARGETLIBS) \
+    $(DDK_LIB_PATH)\wdmsec.lib \
+    $(DDK_LIB_PATH)\cng.lib \
+    ..\..\third_party\SymCrypt\build\bin\amd64fre\lib\symcrypt_static.lib
+
+C_DEFINES=$(C_DEFINES) -DNTDDI_VERSION=0x0A000000 -D_KERNEL_MODE -D_AMD64_ -DAMD64 -D_WIN64 -DPOOL_NX_OPTIN=1

@@ -1,0 +1,97 @@
+name: build
+
+# Full CI: builds the SymCrypt dependency, the SysmonUser service and the
+# SysmonDrv kernel driver, then runs the runnable test suites (hash vectors,
+# rules-match vectors) and the source-level static regression guards.
+#
+# NOTE: the driver job provisions the WDK from the Microsoft.Windows.WDK.x64
+# NuGet package and passes it to SysmonDrv/build.ps1 -WdkRoot. The pinned WDK
+# NuGet version may need bumping as new versions ship; the job prints the
+# extracted package layout to make a layout mismatch easy to diagnose.
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-user:
+    name: SysmonUser + tests
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: microsoft/setup-msbuild@v2
+
+      - name: Build SymCrypt
+        shell: pwsh
+        run: |
+          cmake -S third_party/SymCrypt -B third_party/SymCrypt/build/cmake/ci -A x64
+          cmake --build third_party/SymCrypt/build/cmake/ci --config Release --parallel
+
+      - name: Stage SymCrypt static lib where the projects expect it
+        shell: pwsh
+        run: |
+          $lib = Get-ChildItem -Path third_party/SymCrypt/build/cmake -Recurse -Filter symcrypt_static.lib |
+              Where-Object { $_.FullName -match 'Release' } | Select-Object -First 1
+          if (-not $lib) { throw 'symcrypt_static.lib not found in SymCrypt build output' }
+          $dest = 'third_party/SymCrypt/build/bin/amd64fre/lib/symcrypt_static.lib'
+          New-Item -ItemType Directory -Force -Path (Split-Path $dest) | Out-Null
+          Copy-Item $lib.FullName $dest -Force
+
+      - name: Build SysmonUser (Release x64)
+        run: msbuild SysmonUser\SysmonUser.vcxproj /p:Configuration=Release /p:Platform=x64 /m
+
+      - name: Run hash-compat vector tests
+        shell: pwsh
+        run: pwsh -File SysmonUser/tests/Invoke-HashCompatVectorTest.ps1
+
+      - name: Run rules-match vector tests
+        shell: pwsh
+        run: pwsh -File SysmonUser/tests/Invoke-RulesMatchVectorTest.ps1
+
+      - name: Run static regression guards
+        shell: pwsh
+        run: pwsh -File scripts/Test-StaticRegressionGuards.ps1
+
+  build-driver:
+    name: SysmonDrv (driver)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Build SymCrypt
+        shell: pwsh
+        run: |
+          cmake -S third_party/SymCrypt -B third_party/SymCrypt/build/cmake/ci -A x64
+          cmake --build third_party/SymCrypt/build/cmake/ci --config Release --parallel
+
+      - name: Stage SymCrypt static lib where the driver expects it
+        shell: pwsh
+        run: |
+          $lib = Get-ChildItem -Path third_party/SymCrypt/build/cmake -Recurse -Filter symcrypt_static.lib |
+              Where-Object { $_.FullName -match 'Release' } | Select-Object -First 1
+          if (-not $lib) { throw 'symcrypt_static.lib not found in SymCrypt build output' }
+          $dest = 'third_party/SymCrypt/build/bin/amd64fre/lib/symcrypt_static.lib'
+          New-Item -ItemType Directory -Force -Path (Split-Path $dest) | Out-Null
+          Copy-Item $lib.FullName $dest -Force
+
+      - name: Restore WDK NuGet package
+        shell: pwsh
+        run: |
+          nuget install Microsoft.Windows.WDK.x64 -Version 10.0.26100.3323 -OutputDirectory "$env:RUNNER_TEMP/wdk"
+          $pkg = Get-ChildItem "$env:RUNNER_TEMP/wdk" -Directory | Select-Object -First 1
+          if (-not $pkg) { throw 'WDK NuGet package not restored' }
+          Write-Host "WDK package: $($pkg.FullName)"
+          Write-Host "Package layout:"
+          Get-ChildItem $pkg.FullName | Select-Object -ExpandProperty Name
+          "WDK_ROOT=$($pkg.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Build SysmonDrv (Release)
+        shell: pwsh
+        run: |
+          Push-Location SysmonDrv
+          pwsh -File ./build.ps1 -Release -WdkRoot "$env:WDK_ROOT"
+          Pop-Location

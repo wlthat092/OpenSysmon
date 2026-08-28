@@ -1,0 +1,18 @@
+[
+    uuid(12345678-1234-1234-1234-123456789ABC),
+    version(1.0),
+    pointer_default(unique)
+]
+interface SysmonClipboard
+{
+    void SysmonClipboardRegister(
+        [in] handle_t hBinding
+    );
+
+    void SysmonClipboardSend(
+        [in] handle_t hBinding,
+        [in] unsigned long SessionId,
+        [in] unsigned long OwnerProcessId,
+        [in, string] wchar_t *Text
+    );
+}

@@ -1,0 +1,34 @@
+<Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+  <System>
+	<Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+	<EventID>8</EventID>
+	<Version>2</Version>
+	<Level>4</Level>
+	<Task>8</Task>
+	<Opcode>0</Opcode>
+	<Keywords>0x8000000000000000</Keywords>
+	<TimeCreated SystemTime="2022-09-22T23:54:16.974465900Z" />
+	<EventRecordID>2445062</EventRecordID>
+	<Correlation />
+	<Execution ProcessID="6152" ThreadID="7900" />
+	<Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+	<Computer>TEST-HOST</Computer>
+	<Security UserID="S-1-5-18" />
+  </System>
+  <EventData>
+	<Data Name="RuleName">-</Data>
+	<Data Name="UtcTime">2022-09-22 23:54:16.705</Data>
+	<Data Name="SourceProcessGuid">{564ff025-e18a-62f6-cc03-000000000500}</Data>
+	<Data Name="SourceProcessId">6168</Data>
+	<Data Name="SourceImage">C:\Windows\System32\VBoxTray.exe</Data>
+	<Data Name="TargetProcessGuid">{564ff025-e14b-62f6-9a03-000000000500}</Data>
+	<Data Name="TargetProcessId">4776</Data>
+	<Data Name="TargetImage">C:\Windows\System32\csrss.exe</Data>
+	<Data Name="NewThreadId">2400</Data>
+	<Data Name="StartAddress">0xFFFFE05E664A2460</Data>
+	<Data Name="StartModule">-</Data>
+	<Data Name="StartFunction">-</Data>
+	<Data Name="SourceUser">TEST-HOST\test-user</Data>
+	<Data Name="TargetUser">NT AUTHORITY\SYSTEM</Data>
+  </EventData>
+</Event>

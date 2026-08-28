@@ -1,0 +1,4 @@
+[submodule "third_party/SymCrypt"]
+	path = third_party/SymCrypt
+	url = https://github.com/microsoft/SymCrypt.git
+	shallow = true

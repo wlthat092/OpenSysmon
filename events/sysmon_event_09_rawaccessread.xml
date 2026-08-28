@@ -1,0 +1,27 @@
+<Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+  <System>
+	<Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+	<EventID>9</EventID>
+	<Version>2</Version>
+	<Level>4</Level>
+	<Task>9</Task>
+	<Opcode>0</Opcode>
+	<Keywords>0x8000000000000000</Keywords>
+	<TimeCreated SystemTime="2022-09-23T00:20:34.558142300Z" />
+	<EventRecordID>2478645</EventRecordID>
+	<Correlation />
+	<Execution ProcessID="6152" ThreadID="7900" />
+	<Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+	<Computer>TEST-HOST</Computer>
+	<Security UserID="S-1-5-18" />
+  </System>
+  <EventData>
+	<Data Name="RuleName">-</Data>
+	<Data Name="UtcTime">2022-09-23 00:20:34.554</Data>
+	<Data Name="ProcessGuid">{564ff025-d405-62f6-eb03-000000000000}</Data>
+	<Data Name="ProcessId">4</Data>
+	<Data Name="Image">System</Data>
+	<Data Name="Device">\Device\HarddiskVolume1</Data>
+	<Data Name="User">NT AUTHORITY\SYSTEM</Data>
+  </EventData>
+</Event>

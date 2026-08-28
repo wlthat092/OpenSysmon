@@ -1,0 +1,29 @@
+<Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+  <System>
+	<Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+	<EventID>26</EventID>
+	<Version>5</Version>
+	<Level>4</Level>
+	<Task>26</Task>
+	<Opcode>0</Opcode>
+	<Keywords>0x8000000000000000</Keywords>
+	<TimeCreated SystemTime="2022-09-22T23:48:38.972881200Z" />
+	<EventRecordID>2418697</EventRecordID>
+	<Correlation />
+	<Execution ProcessID="2948" ThreadID="3724" />
+	<Channel>Microsoft-Windows-Sysmon/Operational</Channel>
+	<Computer>TEST-HOST</Computer>
+	<Security UserID="S-1-5-18" />
+  </System>
+  <EventData>
+	<Data Name="RuleName">-</Data>
+	<Data Name="UtcTime">2022-09-22 23:48:38.962</Data>
+	<Data Name="ProcessGuid">{564ff025-d42e-62f6-2d00-000000000500}</Data>
+	<Data Name="ProcessId">1764</Data>
+	<Data Name="User">NT AUTHORITY\SYSTEM</Data>
+	<Data Name="Image">C:\Windows\system32\svchost.exe</Data>
+	<Data Name="TargetFilename">C:\Windows\Prefetch\SEARCHFILTERHOST.EXE-77482212.pf</Data>
+	<Data Name="Hashes">SHA1=28F357CBA285619E5D4B6BAC3E4C981B4B3DEC28,MD5=EA4FDF01C3764323FFBC22FB10AB06CB,SHA256=E6221E29D59DDA4D1C6C7A0E25E8EA8DBD30B0854BFC3869D7909D9F07E1FF8E,IMPHASH=00000000000000000000000000000000</Data>
+	<Data Name="IsExecutable">false</Data>
+  </EventData>
+</Event>
