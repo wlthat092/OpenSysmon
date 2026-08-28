@@ -31,7 +31,7 @@ jobs:
         shell: pwsh
         run: |
           $symCryptRoot = (Resolve-Path 'third_party/SymCrypt').Path + '\\'
-          msbuild (Join-Path $symCryptRoot 'lib\\symcrypt_static.vcxproj') "/p:SolutionDir=$symCryptRoot" /p:Configuration=Release /p:Platform=x64 /m
+          msbuild (Join-Path $symCryptRoot 'lib\\symcrypt_static.vcxproj') "/p:SolutionDir=$symCryptRoot" /p:Configuration=Release /p:Platform=x64 /p:SpectreMitigation=false /p:Driver_SpectreMitigation=false /m
 
       - name: Stage SymCrypt static lib where the projects expect it
         shell: pwsh
@@ -74,7 +74,7 @@ jobs:
         shell: pwsh
         run: |
           $symCryptRoot = (Resolve-Path 'third_party/SymCrypt').Path + '\\'
-          msbuild (Join-Path $symCryptRoot 'lib\\symcrypt_static.vcxproj') "/p:SolutionDir=$symCryptRoot" /p:Configuration=Release /p:Platform=x64 /m
+          msbuild (Join-Path $symCryptRoot 'lib\\symcrypt_static.vcxproj') "/p:SolutionDir=$symCryptRoot" /p:Configuration=Release /p:Platform=x64 /p:SpectreMitigation=false /p:Driver_SpectreMitigation=false /m
 
       - name: Stage SymCrypt static lib where the driver expects it
         shell: pwsh
