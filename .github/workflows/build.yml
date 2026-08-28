@@ -25,18 +25,13 @@ jobs:
       - name: Build SymCrypt
         shell: pwsh
         run: |
-          cmake -S third_party/SymCrypt -B third_party/SymCrypt/build/cmake/ci -A x64
-          cmake --build third_party/SymCrypt/build/cmake/ci --config Release --parallel
+          msbuild third_party/SymCrypt/SymCrypt.sln /p:Configuration=Release /p:Platform=x64 /m
 
       - name: Stage SymCrypt static lib where the projects expect it
         shell: pwsh
         run: |
-          $lib = Get-ChildItem -Path third_party/SymCrypt/build/cmake -Recurse -Filter symcrypt_static.lib |
-              Where-Object { $_.FullName -match 'Release' } | Select-Object -First 1
-          if (-not $lib) { throw 'symcrypt_static.lib not found in SymCrypt build output' }
-          $dest = 'third_party/SymCrypt/build/bin/amd64fre/lib/symcrypt_static.lib'
-          New-Item -ItemType Directory -Force -Path (Split-Path $dest) | Out-Null
-          Copy-Item $lib.FullName $dest -Force
+          $lib = 'third_party/SymCrypt/build/bin/amd64fre/lib/symcrypt_static.lib'
+          if (-not (Test-Path -LiteralPath $lib -PathType Leaf)) { throw "symcrypt_static.lib not found at $lib" }
 
       - name: Build SysmonUser (Release x64)
         run: msbuild SysmonUser\SysmonUser.vcxproj /p:Configuration=Release /p:Platform=x64 /m
@@ -60,22 +55,18 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+      - uses: microsoft/setup-msbuild@v2
 
       - name: Build SymCrypt
         shell: pwsh
         run: |
-          cmake -S third_party/SymCrypt -B third_party/SymCrypt/build/cmake/ci -A x64
-          cmake --build third_party/SymCrypt/build/cmake/ci --config Release --parallel
+          msbuild third_party/SymCrypt/SymCrypt.sln /p:Configuration=Release /p:Platform=x64 /m
 
       - name: Stage SymCrypt static lib where the driver expects it
         shell: pwsh
         run: |
-          $lib = Get-ChildItem -Path third_party/SymCrypt/build/cmake -Recurse -Filter symcrypt_static.lib |
-              Where-Object { $_.FullName -match 'Release' } | Select-Object -First 1
-          if (-not $lib) { throw 'symcrypt_static.lib not found in SymCrypt build output' }
-          $dest = 'third_party/SymCrypt/build/bin/amd64fre/lib/symcrypt_static.lib'
-          New-Item -ItemType Directory -Force -Path (Split-Path $dest) | Out-Null
-          Copy-Item $lib.FullName $dest -Force
+          $lib = 'third_party/SymCrypt/build/bin/amd64fre/lib/symcrypt_static.lib'
+          if (-not (Test-Path -LiteralPath $lib -PathType Leaf)) { throw "symcrypt_static.lib not found at $lib" }
 
       - name: Restore WDK NuGet package
         shell: pwsh
