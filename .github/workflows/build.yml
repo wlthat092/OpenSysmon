@@ -10,8 +10,7 @@ name: build
 # extracted package layout to make a layout mismatch easy to diagnose.
 
 on:
-  push:
-  pull_request:
+  workflow_dispatch:
 
 jobs:
   build-user:
