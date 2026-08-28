@@ -39,7 +39,11 @@ jobs:
         shell: pwsh
         run: |
           $symCryptRoot = (Resolve-Path 'third_party/SymCrypt').Path + '\\'
-          msbuild (Join-Path $symCryptRoot 'lib\\symcrypt_static.vcxproj') "/p:SolutionDir=$symCryptRoot" "/p:WindowsSdkDir=$env:WDK_CONTENT_ROOT" /p:TargetPlatformVersion=10.0.26100.0 /p:Configuration=Release /p:Platform=x64 /p:SpectreMitigation=false /p:Driver_SpectreMitigation=false /m
+          $sdkRoot = Join-Path ${env:ProgramFiles(x86)} 'Windows Kits\10'
+          $sdkVersion = Get-ChildItem (Join-Path $sdkRoot 'Include') -Directory | Where-Object { $_.Name -match '^10\.' } | Sort-Object Name -Descending | Select-Object -First 1 -ExpandProperty Name
+          if (-not $sdkVersion) { throw 'Installed Windows SDK was not found' }
+          $wdkKernelInclude = Join-Path $env:WDK_CONTENT_ROOT 'Include\10.0.26100.0\km'
+          msbuild (Join-Path $symCryptRoot 'lib\\symcrypt_static.vcxproj') "/p:SolutionDir=$symCryptRoot" "/p:WindowsSdkDir=$($sdkRoot.TrimEnd('\\'))\\" "/p:TargetPlatformVersion=$sdkVersion" "/p:AdditionalIncludeDirectories=$wdkKernelInclude" /p:Configuration=Release /p:Platform=x64 /p:SpectreMitigation=false /p:Driver_SpectreMitigation=false /m
 
       - name: Stage SymCrypt static lib where the projects expect it
         shell: pwsh
@@ -91,7 +95,11 @@ jobs:
         shell: pwsh
         run: |
           $symCryptRoot = (Resolve-Path 'third_party/SymCrypt').Path + '\\'
-          msbuild (Join-Path $symCryptRoot 'lib\\symcrypt_static.vcxproj') "/p:SolutionDir=$symCryptRoot" "/p:WindowsSdkDir=$env:WDK_CONTENT_ROOT" /p:TargetPlatformVersion=10.0.26100.0 /p:Configuration=Release /p:Platform=x64 /p:SpectreMitigation=false /p:Driver_SpectreMitigation=false /m
+          $sdkRoot = Join-Path ${env:ProgramFiles(x86)} 'Windows Kits\10'
+          $sdkVersion = Get-ChildItem (Join-Path $sdkRoot 'Include') -Directory | Where-Object { $_.Name -match '^10\.' } | Sort-Object Name -Descending | Select-Object -First 1 -ExpandProperty Name
+          if (-not $sdkVersion) { throw 'Installed Windows SDK was not found' }
+          $wdkKernelInclude = Join-Path $env:WDK_CONTENT_ROOT 'Include\10.0.26100.0\km'
+          msbuild (Join-Path $symCryptRoot 'lib\\symcrypt_static.vcxproj') "/p:SolutionDir=$symCryptRoot" "/p:WindowsSdkDir=$($sdkRoot.TrimEnd('\\'))\\" "/p:TargetPlatformVersion=$sdkVersion" "/p:AdditionalIncludeDirectories=$wdkKernelInclude" /p:Configuration=Release /p:Platform=x64 /p:SpectreMitigation=false /p:Driver_SpectreMitigation=false /m
 
       - name: Stage SymCrypt static lib where the driver expects it
         shell: pwsh
