@@ -41,7 +41,7 @@ jobs:
           $symCryptRoot = (Resolve-Path 'third_party/SymCrypt').Path + '\\'
           $wdkIncludeRoot = Join-Path $env:WDK_CONTENT_ROOT 'Include\10.0.26100.0'
           $env:CL = '/I"' + (Join-Path $wdkIncludeRoot 'km') + '" /I"' + (Join-Path $wdkIncludeRoot 'shared') + '" /I"' + (Join-Path $wdkIncludeRoot 'ucrt') + '"'
-          $includePath = (Join-Path $wdkIncludeRoot 'km') + ';' + (Join-Path $wdkIncludeRoot 'shared') + ';' + (Join-Path $wdkIncludeRoot 'ucrt') + ';' + (Join-Path $symCryptRoot 'inc')
+          $includePath = @((Join-Path $wdkIncludeRoot 'km'), (Join-Path $wdkIncludeRoot 'shared'), (Join-Path $wdkIncludeRoot 'ucrt'), (Join-Path $symCryptRoot 'inc')) -join '%3B'
           msbuild (Join-Path $symCryptRoot 'lib\\symcrypt_static.vcxproj') "/p:SolutionDir=$symCryptRoot" "/p:WindowsSdkDir=$($env:WDK_CONTENT_ROOT)\\" "/p:IncludePath=$includePath" /p:TargetPlatformVersion=10.0.26100.0 /p:WindowsSDKInstalled=true /p:WindowsSDK_Desktop_Support=true /p:Configuration=Release /p:Platform=x64 /p:SpectreMitigation=false /p:Driver_SpectreMitigation=false /m
 
       - name: Stage SymCrypt static lib where the projects expect it
@@ -96,7 +96,7 @@ jobs:
           $symCryptRoot = (Resolve-Path 'third_party/SymCrypt').Path + '\\'
           $wdkIncludeRoot = Join-Path $env:WDK_CONTENT_ROOT 'Include\10.0.26100.0'
           $env:CL = '/I"' + (Join-Path $wdkIncludeRoot 'km') + '" /I"' + (Join-Path $wdkIncludeRoot 'shared') + '" /I"' + (Join-Path $wdkIncludeRoot 'ucrt') + '"'
-          $includePath = (Join-Path $wdkIncludeRoot 'km') + ';' + (Join-Path $wdkIncludeRoot 'shared') + ';' + (Join-Path $wdkIncludeRoot 'ucrt') + ';' + (Join-Path $symCryptRoot 'inc')
+          $includePath = @((Join-Path $wdkIncludeRoot 'km'), (Join-Path $wdkIncludeRoot 'shared'), (Join-Path $wdkIncludeRoot 'ucrt'), (Join-Path $symCryptRoot 'inc')) -join '%3B'
           msbuild (Join-Path $symCryptRoot 'lib\\symcrypt_static.vcxproj') "/p:SolutionDir=$symCryptRoot" "/p:WindowsSdkDir=$($env:WDK_CONTENT_ROOT)\\" "/p:IncludePath=$includePath" /p:TargetPlatformVersion=10.0.26100.0 /p:WindowsSDKInstalled=true /p:WindowsSDK_Desktop_Support=true /p:Configuration=Release /p:Platform=x64 /p:SpectreMitigation=false /p:Driver_SpectreMitigation=false /m
 
       - name: Stage SymCrypt static lib where the driver expects it
