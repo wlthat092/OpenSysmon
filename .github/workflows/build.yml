@@ -40,6 +40,12 @@ jobs:
         run: |
           $symCryptRoot = (Resolve-Path 'third_party/SymCrypt').Path + '\\'
           $wdkIncludeRoot = Join-Path $env:WDK_CONTENT_ROOT 'Include\10.0.26100.0'
+          $symCryptProps = Join-Path $symCryptRoot 'msbuild\symcrypt.undocked.props'
+          $propsText = Get-Content -LiteralPath $symCryptProps -Raw
+          $kmInclude = Join-Path $wdkIncludeRoot 'km'
+          $includeLine = '    <IncludePath>$(SolutionDir)inc;' + $kmInclude + ';$(IncludePath);</IncludePath>'
+          $propsText = [regex]::Replace($propsText, '    <IncludePath>\$\(SolutionDir\)inc;.*?</IncludePath>', $includeLine)
+          Set-Content -LiteralPath $symCryptProps -Value $propsText -Encoding UTF8
           $env:CL = '/I"' + (Join-Path $wdkIncludeRoot 'km') + '" /I"' + (Join-Path $wdkIncludeRoot 'shared') + '" /I"' + (Join-Path $wdkIncludeRoot 'ucrt') + '"'
           $env:INCLUDE = (Join-Path $wdkIncludeRoot 'km') + ';' + (Join-Path $wdkIncludeRoot 'shared') + ';' + (Join-Path $wdkIncludeRoot 'ucrt')
           $includePath = @((Join-Path $wdkIncludeRoot 'km'), (Join-Path $wdkIncludeRoot 'shared'), (Join-Path $wdkIncludeRoot 'ucrt'), (Join-Path $symCryptRoot 'inc')) -join '%3B'
@@ -96,6 +102,12 @@ jobs:
         run: |
           $symCryptRoot = (Resolve-Path 'third_party/SymCrypt').Path + '\\'
           $wdkIncludeRoot = Join-Path $env:WDK_CONTENT_ROOT 'Include\10.0.26100.0'
+          $symCryptProps = Join-Path $symCryptRoot 'msbuild\symcrypt.undocked.props'
+          $propsText = Get-Content -LiteralPath $symCryptProps -Raw
+          $kmInclude = Join-Path $wdkIncludeRoot 'km'
+          $includeLine = '    <IncludePath>$(SolutionDir)inc;' + $kmInclude + ';$(IncludePath);</IncludePath>'
+          $propsText = [regex]::Replace($propsText, '    <IncludePath>\$\(SolutionDir\)inc;.*?</IncludePath>', $includeLine)
+          Set-Content -LiteralPath $symCryptProps -Value $propsText -Encoding UTF8
           $env:CL = '/I"' + (Join-Path $wdkIncludeRoot 'km') + '" /I"' + (Join-Path $wdkIncludeRoot 'shared') + '" /I"' + (Join-Path $wdkIncludeRoot 'ucrt') + '"'
           $env:INCLUDE = (Join-Path $wdkIncludeRoot 'km') + ';' + (Join-Path $wdkIncludeRoot 'shared') + ';' + (Join-Path $wdkIncludeRoot 'ucrt')
           $includePath = @((Join-Path $wdkIncludeRoot 'km'), (Join-Path $wdkIncludeRoot 'shared'), (Join-Path $wdkIncludeRoot 'ucrt'), (Join-Path $symCryptRoot 'inc')) -join '%3B'
