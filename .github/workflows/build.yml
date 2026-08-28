@@ -25,7 +25,8 @@ jobs:
       - name: Build SymCrypt
         shell: pwsh
         run: |
-          msbuild third_party/SymCrypt/SymCrypt.sln /p:Configuration=Release /p:Platform=x64 /m
+          $symCryptRoot = (Resolve-Path 'third_party/SymCrypt').Path + '\\'
+          msbuild (Join-Path $symCryptRoot 'lib\\symcrypt_static.vcxproj') "/p:SolutionDir=$symCryptRoot" /p:Configuration=Release /p:Platform=x64 /m
 
       - name: Stage SymCrypt static lib where the projects expect it
         shell: pwsh
@@ -60,7 +61,8 @@ jobs:
       - name: Build SymCrypt
         shell: pwsh
         run: |
-          msbuild third_party/SymCrypt/SymCrypt.sln /p:Configuration=Release /p:Platform=x64 /m
+          $symCryptRoot = (Resolve-Path 'third_party/SymCrypt').Path + '\\'
+          msbuild (Join-Path $symCryptRoot 'lib\\symcrypt_static.vcxproj') "/p:SolutionDir=$symCryptRoot" /p:Configuration=Release /p:Platform=x64 /m
 
       - name: Stage SymCrypt static lib where the driver expects it
         shell: pwsh
