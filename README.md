@@ -31,6 +31,18 @@ OpenSysmon 基于原版 `Sysmon64.exe` 和 `SysmonDrv.sys` 的逆向结果实现
 6. 运行最小模拟器事件验证：
    `powershell -NoProfile -ExecutionPolicy Bypass -File .\tests\sysmon-events\Deploy-EventTests.ps1 -Target user@host -EventIds 22`
 
+## 下载 Release 包并本机安装
+
+GitHub Release 包是可直接部署的 Windows x64 ZIP，仅包含 `Sysmon.exe`、`SysmonDrv.sys`、`sysmon_config.xml`、`install.ps1` 和 `uninstall.ps1`。解压后，以管理员身份打开 PowerShell，在包目录执行：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\install.ps1
+```
+
+安装脚本会将文件复制到系统目录和 `C:\ProgramData\OpenSysmon`，创建或更新服务并加载包内配置。卸载时执行 `powershell -ExecutionPolicy Bypass -File .\uninstall.ps1`。驱动使用本机测试证书签名；请在允许测试签名的隔离测试机上运行，Release 包不适合生产部署。
+
+维护者可在 GitHub Actions 手动运行 `build` 工作流；填写 `release_tag`（例如 `v0.1.0`）会自动创建对应 GitHub Release 并上传 ZIP。不填写时仅生成可下载的 Actions 工件。
+
 ## 依赖与许可证
 
 ### 构建依赖
@@ -82,7 +94,7 @@ OpenSysmon 基于原版 `Sysmon64.exe` 和 `SysmonDrv.sys` 的逆向结果实现
 ## 文档导航
 
 - [软件架构](docs/architecture.md)
-- [配置与过滤](docs/configuration.md)
+- [配置过滤](docs/configuration.md)
 - [安装部署](docs/deployment.md)
 - [测试验证](docs/testing.md)
 - [故障排查](docs/troubleshooting.md)

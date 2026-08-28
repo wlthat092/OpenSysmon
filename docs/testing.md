@@ -13,7 +13,8 @@
 - `SysmonUser/build.ps1`
 - `SysmonDrv/build.ps1`
 - `deploy.ps1`
-- `full_install.ps1`
+- `install.ps1`（Release 包本机安装）
+- `uninstall.ps1`（本机卸载）
 
 ### 远程事件验证
 

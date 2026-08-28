@@ -88,6 +88,18 @@ powershell -ExecutionPolicy Bypass -File .\SysmonDrv\build.ps1 -Release -Rebuild
 
 ## 安装、升级与卸载
 
+### Release 包一键安装
+
+GitHub Release ZIP 仅包含 Release 版 `Sysmon.exe`、`SysmonDrv.sys`、`sysmon_config.xml`、`install.ps1` 和 `uninstall.ps1`。解压后，在包目录以管理员身份执行：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\install.ps1
+```
+
+脚本会停止旧服务、复制文件到 `C:\Windows\System32` 和 `C:\Windows\System32\drivers`，将配置保存到 `C:\ProgramData\OpenSysmon\sysmon_config.xml`，签名驱动并调用 `Sysmon.exe -i` 完成安装。卸载执行 `powershell -ExecutionPolicy Bypass -File .\uninstall.ps1`；使用 `-KeepData` 可保留 ProgramData 中的配置。
+
+Release 包中的驱动使用本机生成的测试证书签名，只适用于隔离测试环境。目标系统必须允许该测试签名策略；脚本不会自动修改 BCD 或关闭 Windows 安全策略。
+
 ### 命令行入口
 
 用户态程序的核心安装命令与原版 Sysmon 保持同类入口：
@@ -142,27 +154,6 @@ powershell -ExecutionPolicy Bypass -File .\deploy.ps1 -Target user@host -RemoteR
   指定驱动构建和部署配置，默认 `Release`。
 - `-UserConfiguration Debug|Release`
   指定用户态构建和部署配置，默认 `Release`。
-
-### `full_install.ps1`
-
-`full_install.ps1` 适合在目标机本地手工执行，必须显式传入本机已有的驱动、用户态程序和可选配置路径：
-
-- 从指定源路径复制 `SysmonDrv.sys` 与 `Sysmon.exe`
-- 使用已有 `SysmonTest` 证书对驱动签名
-- 注册 minifilter 实例
-- 创建并启动 `SysmonDrv` 服务
-- 执行 `C:\Windows\System32\Sysmon.exe -i`
-
-这个脚本适合确认“远程下发无问题，但本机安装步骤是否仍有异常”。
-
-示例：
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\full_install.ps1 `
-  -DriverSourcePath .\SysmonDrv\x64\Release\SysmonDrv.sys `
-  -SysmonSourcePath .\SysmonUser\x64\Release\Sysmon.exe `
-  -ConfigPath .\sysmon_config.xml
-```
 
 ## 事件描述资源安装
 

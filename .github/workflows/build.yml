@@ -11,6 +11,11 @@ name: build
 
 on:
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Optional tag to create a GitHub Release (for example v0.1.0)'
+        required: false
+        type: string
 
 jobs:
   build-user:
@@ -48,6 +53,13 @@ jobs:
       - name: Run static regression guards
         shell: pwsh
         run: pwsh -File scripts/Test-StaticRegressionGuards.ps1
+
+      - name: Upload user-mode Release binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: opensysmon-user-release
+          path: SysmonUser/x64/Release/Sysmon.exe
+          if-no-files-found: error
 
   build-driver:
     name: SysmonDrv (driver)
@@ -87,3 +99,63 @@ jobs:
           Push-Location SysmonDrv
           pwsh -File ./build.ps1 -Release -WdkRoot "$env:WDK_ROOT"
           Pop-Location
+
+      - name: Upload driver Release binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: opensysmon-driver-release
+          path: SysmonDrv/x64/Release/SysmonDrv.sys
+          if-no-files-found: error
+
+  package-release:
+    name: Package OpenSysmon Release
+    needs: [build-user, build-driver]
+    runs-on: windows-latest
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Download user-mode binary
+        uses: actions/download-artifact@v4
+        with:
+          name: opensysmon-user-release
+          path: release-input/user
+
+      - name: Download driver binary
+        uses: actions/download-artifact@v4
+        with:
+          name: opensysmon-driver-release
+          path: release-input/driver
+
+      - name: Create Release ZIP
+        shell: pwsh
+        env:
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          $version = if ($env:RELEASE_TAG) { $env:RELEASE_TAG } else { "manual-${{ github.run_number }}" }
+          pwsh -File ./scripts/New-ReleasePackage.ps1 `
+            -Version $version `
+            -OutputDirectory ./dist `
+            -UserBinaryPath ./release-input/user/Sysmon.exe `
+            -DriverBinaryPath ./release-input/driver/SysmonDrv.sys
+
+      - name: Upload Release package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: OpenSysmon-release-package
+          path: dist/OpenSysmon-*.zip
+          if-no-files-found: error
+
+      - name: Publish GitHub Release when a tag is supplied
+        if: ${{ inputs.release_tag != '' }}
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          $zip = Get-ChildItem ./dist/OpenSysmon-*.zip | Select-Object -First 1
+          gh release create $env:RELEASE_TAG $zip.FullName --title "OpenSysmon $env:RELEASE_TAG" --generate-notes --target $env:GITHUB_SHA

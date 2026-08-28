@@ -23,6 +23,8 @@
 **/obj/
 **/out/
 **/dist/
+*.zip
+/release-input/
 **/[Dd]ebug/
 **/[Rr]elease/
 **/TestResults/

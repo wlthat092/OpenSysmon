@@ -30,6 +30,18 @@ Clone with `git clone --recurse-submodules <repository-url>`. For an existing cl
 6. Run a smoke event test:
    `powershell -NoProfile -ExecutionPolicy Bypass -File .\tests\sysmon-events\Deploy-EventTests.ps1 -Target user@host -EventIds 22`
 
+## Install from a Release package
+
+Each GitHub Release ZIP is a self-contained Windows x64 package containing only `Sysmon.exe`, `SysmonDrv.sys`, `sysmon_config.xml`, `install.ps1`, and `uninstall.ps1`. After extracting it, open an elevated PowerShell in the package directory and run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\install.ps1
+```
+
+The installer copies the files to the system directories and `C:\ProgramData\OpenSysmon`, creates or updates the services, and loads the bundled configuration. To uninstall, run `powershell -ExecutionPolicy Bypass -File .\uninstall.ps1`. The driver is signed with a local test certificate; use an isolated test machine configured to accept test signatures. Release packages are not suitable for production deployment.
+
+Maintainers can run the `build` workflow manually. Supplying `release_tag` (for example `v0.1.0`) creates a GitHub Release and uploads the ZIP; leaving it empty produces an Actions artifact only.
+
 ## Dependencies and Licensing
 
 ### Build Dependencies
