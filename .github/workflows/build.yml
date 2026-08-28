@@ -27,11 +27,19 @@ jobs:
           submodules: recursive
       - uses: microsoft/setup-msbuild@v2
 
+      - name: Restore WDK NuGet package for SymCrypt headers
+        shell: pwsh
+        run: |
+          nuget install Microsoft.Windows.WDK.x64 -Version 10.0.26100.3323 -OutputDirectory "$env:RUNNER_TEMP/wdk"
+          $pkg = Get-ChildItem "$env:RUNNER_TEMP/wdk" -Directory | Select-Object -First 1
+          if (-not $pkg) { throw 'WDK NuGet package not restored' }
+          "WDK_CONTENT_ROOT=$($pkg.FullName)\c" | Out-File -FilePath $env:GITHUB_ENV -Append
+
       - name: Build SymCrypt
         shell: pwsh
         run: |
           $symCryptRoot = (Resolve-Path 'third_party/SymCrypt').Path + '\\'
-          msbuild (Join-Path $symCryptRoot 'lib\\symcrypt_static.vcxproj') "/p:SolutionDir=$symCryptRoot" /p:Configuration=Release /p:Platform=x64 /p:SpectreMitigation=false /p:Driver_SpectreMitigation=false /m
+          msbuild (Join-Path $symCryptRoot 'lib\\symcrypt_static.vcxproj') "/p:SolutionDir=$symCryptRoot" "/p:WindowsSdkDir=$env:WDK_CONTENT_ROOT" /p:TargetPlatformVersion=10.0.26100.0 /p:Configuration=Release /p:Platform=x64 /p:SpectreMitigation=false /p:Driver_SpectreMitigation=false /m
 
       - name: Stage SymCrypt static lib where the projects expect it
         shell: pwsh
@@ -70,11 +78,20 @@ jobs:
           submodules: recursive
       - uses: microsoft/setup-msbuild@v2
 
+      - name: Restore WDK NuGet package for SymCrypt headers
+        shell: pwsh
+        run: |
+          nuget install Microsoft.Windows.WDK.x64 -Version 10.0.26100.3323 -OutputDirectory "$env:RUNNER_TEMP/wdk"
+          $pkg = Get-ChildItem "$env:RUNNER_TEMP/wdk" -Directory | Select-Object -First 1
+          if (-not $pkg) { throw 'WDK NuGet package not restored' }
+          "WDK_ROOT=$($pkg.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Append
+          "WDK_CONTENT_ROOT=$($pkg.FullName)\c" | Out-File -FilePath $env:GITHUB_ENV -Append
+
       - name: Build SymCrypt
         shell: pwsh
         run: |
           $symCryptRoot = (Resolve-Path 'third_party/SymCrypt').Path + '\\'
-          msbuild (Join-Path $symCryptRoot 'lib\\symcrypt_static.vcxproj') "/p:SolutionDir=$symCryptRoot" /p:Configuration=Release /p:Platform=x64 /p:SpectreMitigation=false /p:Driver_SpectreMitigation=false /m
+          msbuild (Join-Path $symCryptRoot 'lib\\symcrypt_static.vcxproj') "/p:SolutionDir=$symCryptRoot" "/p:WindowsSdkDir=$env:WDK_CONTENT_ROOT" /p:TargetPlatformVersion=10.0.26100.0 /p:Configuration=Release /p:Platform=x64 /p:SpectreMitigation=false /p:Driver_SpectreMitigation=false /m
 
       - name: Stage SymCrypt static lib where the driver expects it
         shell: pwsh
@@ -82,22 +99,11 @@ jobs:
           $lib = 'third_party/SymCrypt/build/bin/amd64fre/lib/symcrypt_static.lib'
           if (-not (Test-Path -LiteralPath $lib -PathType Leaf)) { throw "symcrypt_static.lib not found at $lib" }
 
-      - name: Restore WDK NuGet package
-        shell: pwsh
-        run: |
-          nuget install Microsoft.Windows.WDK.x64 -Version 10.0.26100.3323 -OutputDirectory "$env:RUNNER_TEMP/wdk"
-          $pkg = Get-ChildItem "$env:RUNNER_TEMP/wdk" -Directory | Select-Object -First 1
-          if (-not $pkg) { throw 'WDK NuGet package not restored' }
-          Write-Host "WDK package: $($pkg.FullName)"
-          Write-Host "Package layout:"
-          Get-ChildItem $pkg.FullName | Select-Object -ExpandProperty Name
-          "WDK_ROOT=$($pkg.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Append
-
       - name: Build SysmonDrv (Release)
         shell: pwsh
         run: |
           Push-Location SysmonDrv
-          pwsh -File ./build.ps1 -Release -WdkRoot "$env:WDK_ROOT"
+          pwsh -File ./build.ps1 -Release -SdkRoot "$env:WDK_CONTENT_ROOT" -WdkRoot "$env:WDK_CONTENT_ROOT"
           Pop-Location
 
       - name: Upload driver Release binary
