@@ -31,8 +31,13 @@ jobs:
         shell: pwsh
         run: |
           nuget install Microsoft.Windows.WDK.x64 -Version 10.0.26100.3323 -OutputDirectory "$env:RUNNER_TEMP/wdk"
-          $pkg = Get-ChildItem "$env:RUNNER_TEMP/wdk" -Directory | Select-Object -First 1
-          if (-not $pkg) { throw 'WDK NuGet package not restored' }
+          $pkg = Get-ChildItem "$env:RUNNER_TEMP/wdk" -Directory |
+            Where-Object { $_.Name -like 'Microsoft.Windows.WDK.x64*' } |
+            Select-Object -First 1
+          if (-not $pkg) {
+            $available = (Get-ChildItem "$env:RUNNER_TEMP/wdk" -Directory | Select-Object -ExpandProperty Name) -join ', '
+            throw "WDK NuGet package not restored. Available packages: $available"
+          }
           $sdkRoot = Join-Path ${env:ProgramFiles(x86)} 'Windows Kits\10'
           $sdkIncludeRoot = Join-Path $sdkRoot 'Include\10.0.26100.0'
           if (-not (Test-Path -LiteralPath (Join-Path $sdkIncludeRoot 'shared\ksamd64.inc') -PathType Leaf)) {
@@ -116,8 +121,13 @@ jobs:
         shell: pwsh
         run: |
           nuget install Microsoft.Windows.WDK.x64 -Version 10.0.26100.3323 -OutputDirectory "$env:RUNNER_TEMP/wdk"
-          $pkg = Get-ChildItem "$env:RUNNER_TEMP/wdk" -Directory | Select-Object -First 1
-          if (-not $pkg) { throw 'WDK NuGet package not restored' }
+          $pkg = Get-ChildItem "$env:RUNNER_TEMP/wdk" -Directory |
+            Where-Object { $_.Name -like 'Microsoft.Windows.WDK.x64*' } |
+            Select-Object -First 1
+          if (-not $pkg) {
+            $available = (Get-ChildItem "$env:RUNNER_TEMP/wdk" -Directory | Select-Object -ExpandProperty Name) -join ', '
+            throw "WDK NuGet package not restored. Available packages: $available"
+          }
           "WDK_ROOT=$($pkg.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Append
           "WDK_CONTENT_ROOT=$($pkg.FullName)\c" | Out-File -FilePath $env:GITHUB_ENV -Append
           $sdkRoot = Join-Path ${env:ProgramFiles(x86)} 'Windows Kits\10'
