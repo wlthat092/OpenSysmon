@@ -33,6 +33,13 @@ jobs:
           nuget install Microsoft.Windows.WDK.x64 -Version 10.0.26100.3323 -OutputDirectory "$env:RUNNER_TEMP/wdk"
           $pkg = Get-ChildItem "$env:RUNNER_TEMP/wdk" -Directory | Select-Object -First 1
           if (-not $pkg) { throw 'WDK NuGet package not restored' }
+          $sdkRoot = Join-Path ${env:ProgramFiles(x86)} 'Windows Kits\10'
+          $sdkIncludeRoot = Join-Path $sdkRoot 'Include\10.0.26100.0'
+          if (-not (Test-Path -LiteralPath (Join-Path $sdkIncludeRoot 'shared\ksamd64.inc') -PathType Leaf)) {
+            throw "Windows SDK MASM include not found: $(Join-Path $sdkIncludeRoot 'shared\ksamd64.inc')"
+          }
+          "WINDOWS_SDK_ROOT=$sdkRoot" | Out-File -FilePath $env:GITHUB_ENV -Append
+          "WINDOWS_SDK_INCLUDE_ROOT=$sdkIncludeRoot" | Out-File -FilePath $env:GITHUB_ENV -Append
           "WDK_CONTENT_ROOT=$($pkg.FullName)\c" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Build SymCrypt
@@ -40,16 +47,33 @@ jobs:
         run: |
           $symCryptRoot = (Resolve-Path 'third_party/SymCrypt').Path + '\\'
           $wdkIncludeRoot = Join-Path $env:WDK_CONTENT_ROOT 'Include\10.0.26100.0'
+          $sdkIncludeRoot = $env:WINDOWS_SDK_INCLUDE_ROOT
+          $kmInclude = Join-Path $wdkIncludeRoot 'km'
+          $sharedInclude = Join-Path $sdkIncludeRoot 'shared'
+          $ucrtInclude = Join-Path $sdkIncludeRoot 'ucrt'
+          $ntddk = Join-Path $kmInclude 'ntddk.h'
+          $ksamd64 = Join-Path $sharedInclude 'ksamd64.inc'
+          foreach ($requiredFile in @($ntddk, $ksamd64)) {
+            if (-not (Test-Path -LiteralPath $requiredFile -PathType Leaf)) {
+              throw "Required WDK/SDK file not found: $requiredFile"
+            }
+          }
+          Write-Host "Using WDK kernel headers: $kmInclude"
+          Write-Host "Using Windows SDK shared headers: $sharedInclude"
           $symCryptProps = Join-Path $symCryptRoot 'msbuild\symcrypt.undocked.props'
           $propsText = Get-Content -LiteralPath $symCryptProps -Raw
-          $kmInclude = Join-Path $wdkIncludeRoot 'km'
-          $includeLine = '    <IncludePath>$(SolutionDir)inc;' + $kmInclude + ';$(IncludePath);</IncludePath>'
+          $includeLine = '    <IncludePath>$(SolutionDir)inc;' + $kmInclude + ';' + $sharedInclude + ';' + $ucrtInclude + ';$(IncludePath);</IncludePath>'
           $propsText = [regex]::Replace($propsText, '    <IncludePath>\$\(SolutionDir\)inc;.*?</IncludePath>', $includeLine)
+          $clIncludeLine = '      <AdditionalIncludeDirectories>' + $kmInclude + ';' + $sharedInclude + ';' + $ucrtInclude + ';$(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>'
+          $clCompileRegex = [regex]::new('    <ClCompile>\r?\n      <!--')
+          $propsText = $clCompileRegex.Replace($propsText, "    <ClCompile>`r`n$clIncludeLine`r`n      <!--", 1)
+          $masmRegex = [regex]::new('(?s)(<MASM>.*?<AdditionalOptions>)/Gy %\(AdditionalOptions\)(</AdditionalOptions>)')
+          $masmReplacement = '$1/I&quot;' + $sharedInclude + '&quot; /I&quot;' + $symCryptRoot + 'inc&quot; /Gy %(AdditionalOptions)$2'
+          $propsText = $masmRegex.Replace($propsText, $masmReplacement, 1)
           Set-Content -LiteralPath $symCryptProps -Value $propsText -Encoding UTF8
-          $env:CL = '/I"' + (Join-Path $wdkIncludeRoot 'km') + '" /I"' + (Join-Path $wdkIncludeRoot 'shared') + '" /I"' + (Join-Path $wdkIncludeRoot 'ucrt') + '"'
-          $env:INCLUDE = (Join-Path $wdkIncludeRoot 'km') + ';' + (Join-Path $wdkIncludeRoot 'shared') + ';' + (Join-Path $wdkIncludeRoot 'ucrt')
-          $includePath = @((Join-Path $wdkIncludeRoot 'km'), (Join-Path $wdkIncludeRoot 'shared'), (Join-Path $wdkIncludeRoot 'ucrt'), (Join-Path $symCryptRoot 'inc')) -join '%3B'
-          msbuild (Join-Path $symCryptRoot 'lib\\symcrypt_static.vcxproj') "/p:SolutionDir=$symCryptRoot" "/p:WindowsSdkDir=$($env:WDK_CONTENT_ROOT)\\" "/p:IncludePath=$includePath" /p:TargetPlatformVersion=10.0.26100.0 /p:WindowsSDKInstalled=true /p:WindowsSDK_Desktop_Support=true /p:Configuration=Release /p:Platform=x64 /p:SpectreMitigation=false /p:Driver_SpectreMitigation=false /m
+          $env:CL = '/I"' + $kmInclude + '" /I"' + $sharedInclude + '" /I"' + $ucrtInclude + '"'
+          $env:INCLUDE = @($kmInclude, $sharedInclude, $ucrtInclude, (Join-Path $symCryptRoot 'inc')) -join ';'
+          msbuild (Join-Path $symCryptRoot 'lib\\symcrypt_static.vcxproj') "/p:SolutionDir=$symCryptRoot" "/p:WindowsSdkDir=$($env:WINDOWS_SDK_ROOT)\\" /p:TargetPlatformVersion=10.0.26100.0 /p:WindowsSDKInstalled=true /p:WindowsSDK_Desktop_Support=true /p:Configuration=Release /p:Platform=x64 /p:SpectreMitigation=false /p:Driver_SpectreMitigation=false /m
 
       - name: Stage SymCrypt static lib where the projects expect it
         shell: pwsh
@@ -96,22 +120,46 @@ jobs:
           if (-not $pkg) { throw 'WDK NuGet package not restored' }
           "WDK_ROOT=$($pkg.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Append
           "WDK_CONTENT_ROOT=$($pkg.FullName)\c" | Out-File -FilePath $env:GITHUB_ENV -Append
+          $sdkRoot = Join-Path ${env:ProgramFiles(x86)} 'Windows Kits\10'
+          $sdkIncludeRoot = Join-Path $sdkRoot 'Include\10.0.26100.0'
+          if (-not (Test-Path -LiteralPath (Join-Path $sdkIncludeRoot 'shared\ksamd64.inc') -PathType Leaf)) {
+            throw "Windows SDK MASM include not found: $(Join-Path $sdkIncludeRoot 'shared\ksamd64.inc')"
+          }
+          "WINDOWS_SDK_ROOT=$sdkRoot" | Out-File -FilePath $env:GITHUB_ENV -Append
+          "WINDOWS_SDK_INCLUDE_ROOT=$sdkIncludeRoot" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Build SymCrypt
         shell: pwsh
         run: |
           $symCryptRoot = (Resolve-Path 'third_party/SymCrypt').Path + '\\'
           $wdkIncludeRoot = Join-Path $env:WDK_CONTENT_ROOT 'Include\10.0.26100.0'
+          $sdkIncludeRoot = $env:WINDOWS_SDK_INCLUDE_ROOT
+          $kmInclude = Join-Path $wdkIncludeRoot 'km'
+          $sharedInclude = Join-Path $sdkIncludeRoot 'shared'
+          $ucrtInclude = Join-Path $sdkIncludeRoot 'ucrt'
+          $ntddk = Join-Path $kmInclude 'ntddk.h'
+          $ksamd64 = Join-Path $sharedInclude 'ksamd64.inc'
+          foreach ($requiredFile in @($ntddk, $ksamd64)) {
+            if (-not (Test-Path -LiteralPath $requiredFile -PathType Leaf)) {
+              throw "Required WDK/SDK file not found: $requiredFile"
+            }
+          }
+          Write-Host "Using WDK kernel headers: $kmInclude"
+          Write-Host "Using Windows SDK shared headers: $sharedInclude"
           $symCryptProps = Join-Path $symCryptRoot 'msbuild\symcrypt.undocked.props'
           $propsText = Get-Content -LiteralPath $symCryptProps -Raw
-          $kmInclude = Join-Path $wdkIncludeRoot 'km'
-          $includeLine = '    <IncludePath>$(SolutionDir)inc;' + $kmInclude + ';$(IncludePath);</IncludePath>'
+          $includeLine = '    <IncludePath>$(SolutionDir)inc;' + $kmInclude + ';' + $sharedInclude + ';' + $ucrtInclude + ';$(IncludePath);</IncludePath>'
           $propsText = [regex]::Replace($propsText, '    <IncludePath>\$\(SolutionDir\)inc;.*?</IncludePath>', $includeLine)
+          $clIncludeLine = '      <AdditionalIncludeDirectories>' + $kmInclude + ';' + $sharedInclude + ';' + $ucrtInclude + ';$(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>'
+          $clCompileRegex = [regex]::new('    <ClCompile>\r?\n      <!--')
+          $propsText = $clCompileRegex.Replace($propsText, "    <ClCompile>`r`n$clIncludeLine`r`n      <!--", 1)
+          $masmRegex = [regex]::new('(?s)(<MASM>.*?<AdditionalOptions>)/Gy %\(AdditionalOptions\)(</AdditionalOptions>)')
+          $masmReplacement = '$1/I&quot;' + $sharedInclude + '&quot; /I&quot;' + $symCryptRoot + 'inc&quot; /Gy %(AdditionalOptions)$2'
+          $propsText = $masmRegex.Replace($propsText, $masmReplacement, 1)
           Set-Content -LiteralPath $symCryptProps -Value $propsText -Encoding UTF8
-          $env:CL = '/I"' + (Join-Path $wdkIncludeRoot 'km') + '" /I"' + (Join-Path $wdkIncludeRoot 'shared') + '" /I"' + (Join-Path $wdkIncludeRoot 'ucrt') + '"'
-          $env:INCLUDE = (Join-Path $wdkIncludeRoot 'km') + ';' + (Join-Path $wdkIncludeRoot 'shared') + ';' + (Join-Path $wdkIncludeRoot 'ucrt')
-          $includePath = @((Join-Path $wdkIncludeRoot 'km'), (Join-Path $wdkIncludeRoot 'shared'), (Join-Path $wdkIncludeRoot 'ucrt'), (Join-Path $symCryptRoot 'inc')) -join '%3B'
-          msbuild (Join-Path $symCryptRoot 'lib\\symcrypt_static.vcxproj') "/p:SolutionDir=$symCryptRoot" "/p:WindowsSdkDir=$($env:WDK_CONTENT_ROOT)\\" "/p:IncludePath=$includePath" /p:TargetPlatformVersion=10.0.26100.0 /p:WindowsSDKInstalled=true /p:WindowsSDK_Desktop_Support=true /p:Configuration=Release /p:Platform=x64 /p:SpectreMitigation=false /p:Driver_SpectreMitigation=false /m
+          $env:CL = '/I"' + $kmInclude + '" /I"' + $sharedInclude + '" /I"' + $ucrtInclude + '"'
+          $env:INCLUDE = @($kmInclude, $sharedInclude, $ucrtInclude, (Join-Path $symCryptRoot 'inc')) -join ';'
+          msbuild (Join-Path $symCryptRoot 'lib\\symcrypt_static.vcxproj') "/p:SolutionDir=$symCryptRoot" "/p:WindowsSdkDir=$($env:WINDOWS_SDK_ROOT)\\" /p:TargetPlatformVersion=10.0.26100.0 /p:WindowsSDKInstalled=true /p:WindowsSDK_Desktop_Support=true /p:Configuration=Release /p:Platform=x64 /p:SpectreMitigation=false /p:Driver_SpectreMitigation=false /m
 
       - name: Stage SymCrypt static lib where the driver expects it
         shell: pwsh
@@ -123,7 +171,7 @@ jobs:
         shell: pwsh
         run: |
           Push-Location SysmonDrv
-          pwsh -File ./build.ps1 -Release -SdkRoot "$env:WDK_CONTENT_ROOT" -WdkRoot "$env:WDK_CONTENT_ROOT"
+          pwsh -File ./build.ps1 -Release -SdkRoot "$env:WINDOWS_SDK_ROOT" -WdkRoot "$env:WDK_CONTENT_ROOT"
           Pop-Location
 
       - name: Upload driver Release binary
