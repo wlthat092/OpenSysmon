@@ -105,7 +105,7 @@ if (-not $SkipDriverSigning) {
         Sort-Object NotAfter -Descending |
         Select-Object -First 1
     if ($null -eq $cert) {
-        $cert = New-SelfSignedCertificate @{
+        $certParams = @{
             CertStoreLocation = 'Cert:\LocalMachine\My'
             Type = 'CodeSigningCert'
             DnsName = 'SysmonTestLegacy'
@@ -115,6 +115,7 @@ if (-not $SkipDriverSigning) {
             KeySpec = 'Signature'
             NotAfter = (Get-Date).AddYears(5)
         }
+        $cert = New-SelfSignedCertificate @certParams
     }
     Ensure-CertificateInStore -Certificate $cert -StoreName 'Root'
     Ensure-CertificateInStore -Certificate $cert -StoreName 'TrustedPublisher'

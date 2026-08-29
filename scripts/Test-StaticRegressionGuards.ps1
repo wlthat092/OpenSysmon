@@ -56,6 +56,7 @@ $providerH = Get-SourceText 'SysmonUser/resources/sysmon_provider.h'
 $schemaEventsXml = Get-SourceText 'schema_events.xml'
 $driverProcessH = Get-SourceText 'SysmonDrv/include/process.h'
 $driverBuildPs1 = Get-SourceText 'SysmonDrv/build.ps1'
+$installerPs1 = Get-SourceText 'install.ps1'
 $driverC = Get-SourceText 'SysmonDrv/src/driver.c'
 $driverHashH = Get-SourceText 'SysmonDrv/include/hash.h'
 $driverHashC = Get-SourceText 'SysmonDrv/src/hash.c'
@@ -517,5 +518,12 @@ Assert-True `
 Assert-True `
     ($clipboardMonitorCpp -match 'callAttributes\.Flags\s*=\s*RPC_QUERY_CLIENT_PID') `
     'Clipboard RPC security callback must request the client PID before authorizing helper processes.'
+
+Assert-True `
+    ($installerPs1 -match 'New-SelfSignedCertificate\s+@certParams') `
+    'Installer must splat certificate parameters when creating the test certificate.'
+Assert-True `
+    (-not ($installerPs1 -match 'New-SelfSignedCertificate\s+@\s*\{')) `
+    'Installer must not pass a certificate parameter hashtable as a positional argument.'
 
 Write-Host 'PASS: static regression guards verified.'
